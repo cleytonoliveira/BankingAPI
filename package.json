@@ -9,7 +9,7 @@
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest --detectOpenHandles",
-    "test:watch": "jest --detectOpenHandles --watch"
+    "test:watch": "jest --detectOpenHandles --watchAll"
   },
   "keywords": [],
   "author": "Cleyton Oliveira <cleytonoliveirapro@gmail.com>",
