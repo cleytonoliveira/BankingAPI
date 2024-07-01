@@ -2,13 +2,13 @@
   "name": "bankingapi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test:watch": "jest --detectOpenHandles --watch"
   },
   "keywords": [],
