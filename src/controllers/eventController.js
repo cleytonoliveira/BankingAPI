@@ -8,7 +8,7 @@ async function createEvent(req, res) {
       destination,
       amount,
     );
-    res.status(201).json({ destination: account });
+    res.status(201).json(account);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

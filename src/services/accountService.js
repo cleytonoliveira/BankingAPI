@@ -1,4 +1,4 @@
-const accounts = {};
+const { accounts } = require("../infra/data");
 
 function getAccount(accountId) {
   return accounts[accountId];
@@ -14,8 +14,29 @@ function getBalance(accountId) {
   return balance;
 }
 
-function createAccount(_type, destination, amount) {
-  setAccount(destination, amount);
+function setBalance(accountId, amount) {
+  const account = getAccount(accountId);
+  if (account) {
+    account.balance += amount;
+  }
+}
+
+const eventTypes = {
+  deposit: (destination, amount) => {
+    if (!accounts[destination]) {
+      setAccount(destination, amount);
+      return { destination: accounts[destination] };
+    }
+    setBalance(destination, amount);
+    return { destination: accounts[destination] };
+  },
+};
+
+function createAccount(type, destination, amount) {
+  const event = eventTypes[type];
+  if (event) {
+    return event(destination, amount);
+  }
   return getAccount(destination);
 }
 
