@@ -40,4 +40,14 @@ describe("POST to /event", () => {
       },
     });
   });
+
+  it("should return 404 for non-existing account withdraw", async () => {
+    const response = await request(app).post("/event").send({
+      type: "withdraw",
+      origin: "200",
+      amount: 10,
+    });
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(0);
+  });
 });
