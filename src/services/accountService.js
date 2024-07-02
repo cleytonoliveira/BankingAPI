@@ -37,6 +37,11 @@ const eventFunctionsByTypes = {
     setBalance(origin, -amount);
     return { origin: accounts[origin] };
   },
+  transfer: (destination, origin, amount) => {
+    setBalance(origin, -amount);
+    setBalance(destination, amount);
+    return { origin: accounts[origin], destination: accounts[destination] };
+  },
 };
 
 function createAccount(type, destination, origin, amount) {
