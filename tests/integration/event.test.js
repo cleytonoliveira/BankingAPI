@@ -105,4 +105,20 @@ describe("POST to /event", () => {
       },
     });
   });
+
+  it("should return 404 for non-existing account transfer", async () => {
+    await request(app).post("/event").send({
+      type: "deposit",
+      destination: "300",
+      amount: 15,
+    });
+    const response = await request(app).post("/event").send({
+      type: "transfer",
+      origin: "200",
+      destination: "300",
+      amount: 15,
+    });
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(0);
+  });
 });
