@@ -6,7 +6,7 @@ resetRouter.post("/reset", (_req, res) => {
   Object.keys(accounts).forEach((key) => {
     delete accounts[key];
   });
-  res.status(200).json("OK");
+  res.status(200).send("OK");
 });
 
 module.exports = resetRouter;
