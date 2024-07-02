@@ -21,8 +21,8 @@ function setBalance(accountId, amount) {
   }
 }
 
-const eventTypes = {
-  deposit: (destination, amount) => {
+const eventFunctionsByTypes = {
+  deposit: (destination, _origin, amount) => {
     if (!accounts[destination]) {
       setAccount(destination, amount);
       return { destination: accounts[destination] };
@@ -30,17 +30,19 @@ const eventTypes = {
     setBalance(destination, amount);
     return { destination: accounts[destination] };
   },
-  withdraw: (origin, _amount) => {
+  withdraw: (_destination, origin, amount) => {
     if (!accounts[origin]) {
       return null;
     }
+    setBalance(origin, -amount);
+    return { origin: accounts[origin] };
   },
 };
 
-function createAccount(type, destination, amount) {
-  const event = eventTypes[type];
+function createAccount(type, destination, origin, amount) {
+  const event = eventFunctionsByTypes[type];
   if (event) {
-    return event(destination, amount);
+    return event(destination, origin, amount);
   }
   return getAccount(destination);
 }

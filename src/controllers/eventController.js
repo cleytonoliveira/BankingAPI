@@ -2,10 +2,11 @@ const accountService = require("../services/accountService");
 
 async function createEvent(req, res) {
   try {
-    const { type, destination, amount } = req.body;
+    const { type, destination, origin, amount } = req.body;
     const account = await accountService.createAccount(
       type,
       destination,
+      origin,
       amount,
     );
     if (!account) {
