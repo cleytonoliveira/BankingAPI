@@ -8,6 +8,9 @@ async function createEvent(req, res) {
       destination,
       amount,
     );
+    if (!account) {
+      return res.status(404).json(0);
+    }
     res.status(201).json(account);
   } catch (error) {
     res.status(500).json({ message: error.message });

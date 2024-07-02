@@ -30,6 +30,11 @@ const eventTypes = {
     setBalance(destination, amount);
     return { destination: accounts[destination] };
   },
+  withdraw: (origin, _amount) => {
+    if (!accounts[origin]) {
+      return null;
+    }
+  },
 };
 
 function createAccount(type, destination, amount) {
