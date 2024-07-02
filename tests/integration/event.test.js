@@ -75,4 +75,34 @@ describe("POST to /event", () => {
       },
     });
   });
+
+  it("should return 201 and transfer between existing accounts", async () => {
+    await request(app).post("/event").send({
+      type: "deposit",
+      destination: "100",
+      amount: 15,
+    });
+    await request(app).post("/event").send({
+      type: "deposit",
+      destination: "300",
+      amount: 0,
+    });
+    const response = await request(app).post("/event").send({
+      type: "transfer",
+      origin: "100",
+      destination: "300",
+      amount: 15,
+    });
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      origin: {
+        id: "100",
+        balance: 0,
+      },
+      destination: {
+        id: "300",
+        balance: 15,
+      },
+    });
+  });
 });
