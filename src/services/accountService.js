@@ -1,64 +1,68 @@
-const { accounts } = require("../infra/data");
-
-function getAccount(accountId) {
-  return accounts[accountId];
-}
-
-function setAccount(accountId, amount) {
-  accounts[accountId] = { id: accountId, balance: amount };
-}
+const accountRepository = require("../repository/accountRepository");
+const Account = require("../models/Account");
+const { NotFoundError } = require("../errors/AppError");
 
 function getBalance(accountId) {
-  const account = getAccount(accountId);
-  const balance = account ? account.balance : 0;
-  return balance;
+  const account = accountRepository.getAccountById(accountId);
+  if (account) {
+    return account.balance;
+  }
+  throw new NotFoundError(0);
 }
 
-function setBalance(accountId, amount) {
-  const account = getAccount(accountId);
-  if (account) {
-    account.balance += amount;
+function handleDeposit(destination, _origin, amount) {
+  let account = accountRepository.getAccountById(destination);
+  if (!account) {
+    account = new Account(destination);
   }
+  account.deposit(amount);
+  accountRepository.saveAccount(account);
+  return { destination: account };
+}
+
+function handleWithdraw(_destination, origin, amount) {
+  const account = accountRepository.getAccountById(origin);
+  if (!account) {
+    throw new NotFoundError(0);
+  }
+  account.withdraw(amount);
+  accountRepository.saveAccount(account);
+  return { origin: account };
+}
+
+function handleTransfer(destination, origin, amount) {
+  const originAccount = accountRepository.getAccountById(origin);
+  if (!originAccount) {
+    throw new NotFoundError(0);
+  }
+  let destinationAccount = accountRepository.getAccountById(destination);
+  if (!destinationAccount) {
+    destinationAccount = new Account(destination);
+  }
+  originAccount.withdraw(amount);
+  destinationAccount.deposit(amount);
+  accountRepository.saveAccount(originAccount);
+  accountRepository.saveAccount(destinationAccount);
+  return { origin: originAccount, destination: destinationAccount };
 }
 
 const eventFunctionsByTypes = {
-  deposit: (destination, _origin, amount) => {
-    if (!accounts[destination]) {
-      setAccount(destination, amount);
-      return { destination: accounts[destination] };
-    }
-    setBalance(destination, amount);
-    return { destination: accounts[destination] };
-  },
-  withdraw: (_destination, origin, amount) => {
-    if (!accounts[origin]) {
-      return null;
-    }
-    setBalance(origin, -amount);
-    return { origin: accounts[origin] };
-  },
-  transfer: (destination, origin, amount) => {
-    if (!accounts[destination]) {
-      setAccount(destination, 0);
-    }
-    if (!accounts[origin]) {
-      return null;
-    }
-    setBalance(origin, -amount);
-    setBalance(destination, amount);
-    return { origin: accounts[origin], destination: accounts[destination] };
-  },
+  deposit: handleDeposit,
+  withdraw: handleWithdraw,
+  transfer: handleTransfer,
 };
 
-function createAccount(type, destination, origin, amount) {
+function handleEvent(type, destination, origin, amount) {
   const event = eventFunctionsByTypes[type];
-  if (event) {
-    return event(destination, origin, amount);
-  }
-  return getAccount(destination);
+  return event(destination, origin, amount);
+}
+
+function reset() {
+  accountRepository.reset();
 }
 
 module.exports = {
   getBalance,
-  createAccount,
+  handleEvent,
+  reset,
 };

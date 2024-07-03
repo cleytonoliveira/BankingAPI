@@ -1,12 +1,7 @@
 const express = require("express");
 const resetRouter = express.Router();
-const { accounts } = require("../infra/data");
+const resetController = require("../controllers/resetController");
 
-resetRouter.post("/reset", (_req, res) => {
-  Object.keys(accounts).forEach((key) => {
-    delete accounts[key];
-  });
-  res.status(200).send("OK");
-});
+resetRouter.post("/reset", resetController.reset);
 
 module.exports = resetRouter;
