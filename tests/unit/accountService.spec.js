@@ -45,4 +45,26 @@ describe("accountService", () => {
       );
     });
   });
+
+  describe("handleWithdraw", () => {
+    it("should withdraw the amount from an existing account", () => {
+      const origin = "500";
+      const amount = 100;
+      const account = new Account(origin);
+      account.deposit(200);
+      accountRepository.getAccountById.mockReturnValue(account);
+      const result = accountService.handleWithdraw(null, origin, amount);
+      expect(result.origin.balance).toBe(100);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(account);
+    });
+
+    it("should throw an error if the account does not exist", () => {
+      const origin = "600";
+      const amount = 100;
+      accountRepository.getAccountById.mockReturnValue(null);
+      expect(() => accountService.handleWithdraw(null, origin, amount)).toThrow(
+        NotFoundError,
+      );
+    });
+  });
 });
