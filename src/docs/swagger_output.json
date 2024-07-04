@@ -1,0 +1,314 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Banking API",
+    "description": "Documentation for the Banking API"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001/"
+    },
+    {
+      "url": "https://localhost:3001/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Balance",
+      "description": "Endpoints for balance"
+    },
+    {
+      "name": "Event",
+      "description": "Endpoints for event"
+    },
+    {
+      "name": "Reset",
+      "description": "Endpoints for reset"
+    }
+  ],
+  "paths": {
+    "/balance": {
+      "get": {
+        "tags": [
+          "Balance"
+        ],
+        "description": "Endpoint to get the balance",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "description": "Account ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Balance"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Balance"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/event": {
+      "post": {
+        "tags": [
+          "Event"
+        ],
+        "description": "Endpoint to create an event",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "404": {
+            "description": "Account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "001": {
+            "description": "Deposit created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deposit"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deposit"
+                }
+              }
+            }
+          },
+          "002": {
+            "description": "Withdraw created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Withdraw"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Withdraw"
+                }
+              }
+            }
+          },
+          "003": {
+            "description": "Transfer created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transfer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transfer"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reset": {
+      "post": {
+        "tags": [
+          "Reset"
+        ],
+        "description": "Endpoint to reset the account",
+        "responses": {
+          "200": {
+            "description": "Account reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reset"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reset"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Balance": {
+        "type": "number",
+        "example": 10,
+        "xml": {
+          "name": "Balance"
+        }
+      },
+      "Deposit": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "100"
+              },
+              "balance": {
+                "type": "number",
+                "example": 10
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Deposit"
+        }
+      },
+      "Withdraw": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "100"
+              },
+              "balance": {
+                "type": "number",
+                "example": 5
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Withdraw"
+        }
+      },
+      "Transfer": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "100"
+              },
+              "balance": {
+                "type": "number",
+                "example": 5
+              }
+            }
+          },
+          "destination": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "300"
+              },
+              "balance": {
+                "type": "number",
+                "example": 10
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Transfer"
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "deposit"
+          },
+          "origin": {
+            "type": "string",
+            "example": "100"
+          },
+          "destination": {
+            "type": "string",
+            "example": "300"
+          },
+          "amount": {
+            "type": "number",
+            "example": 10
+          }
+        },
+        "xml": {
+          "name": "Event"
+        }
+      },
+      "Reset": {
+        "type": "string",
+        "example": "OK",
+        "xml": {
+          "name": "Reset"
+        }
+      },
+      "Error": {
+        "type": "number",
+        "example": 0,
+        "xml": {
+          "name": "Error"
+        }
+      }
+    }
+  }
+}
