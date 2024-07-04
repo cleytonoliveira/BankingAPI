@@ -25,7 +25,7 @@ describe("accountService", () => {
 
   describe("handleDeposit", () => {
     it("should deposit the amount into an existing account", () => {
-      const destination = "300";
+      const destination = "100";
       const amount = 100;
       const account = new Account(destination);
       accountRepository.getAccountById.mockReturnValue(account);
@@ -35,7 +35,7 @@ describe("accountService", () => {
     });
 
     it("should create a new account and deposit the amount", () => {
-      const destination = "400";
+      const destination = "100";
       const amount = 100;
       accountRepository.getAccountById.mockReturnValue(null);
       const result = accountService.handleDeposit(destination, null, amount);
@@ -48,7 +48,7 @@ describe("accountService", () => {
 
   describe("handleWithdraw", () => {
     it("should withdraw the amount from an existing account", () => {
-      const origin = "500";
+      const origin = "100";
       const amount = 100;
       const account = new Account(origin);
       account.deposit(200);
@@ -59,12 +59,67 @@ describe("accountService", () => {
     });
 
     it("should throw an error if the account does not exist", () => {
-      const origin = "600";
+      const origin = "999";
       const amount = 100;
       accountRepository.getAccountById.mockReturnValue(null);
       expect(() => accountService.handleWithdraw(null, origin, amount)).toThrow(
         NotFoundError,
       );
+    });
+  });
+
+  describe("handleTransfer", () => {
+    it("should transfer the amount from one account to another", () => {
+      const origin = "100";
+      const destination = "300";
+      const amount = 5;
+      const originAccount = new Account(origin);
+      originAccount.deposit(20);
+      const destinationAccount = new Account(destination);
+      accountRepository.getAccountById.mockImplementation((accountId) => {
+        if (accountId === origin) {
+          return originAccount;
+        }
+        return destinationAccount;
+      });
+      const result = accountService.handleTransfer(destination, origin, amount);
+      expect(result.origin.balance).toBe(15);
+      expect(result.destination.balance).toBe(5);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(originAccount);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(
+        destinationAccount,
+      );
+    });
+
+    it("should create a new account if the destination account does not exist", () => {
+      const origin = "100";
+      const destination = "777";
+      const amount = 5;
+      const originAccount = new Account(origin);
+      originAccount.deposit(20);
+      accountRepository.getAccountById.mockImplementation((accountId) => {
+        if (accountId === origin) {
+          return originAccount;
+        }
+        return null;
+      });
+      const result = accountService.handleTransfer(destination, origin, amount);
+      expect(result.origin.balance).toBe(15);
+      expect(result.destination.balance).toBe(5);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(originAccount);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(
+        result.destination,
+      );
+    });
+
+    it("should throw an error if the origin account does not exist", () => {
+      const origin = "888";
+      const destination = "100";
+      const amount = 100;
+      accountRepository.getAccountById.mockReturnValue(null);
+      expect(() =>
+        accountService.handleTransfer(destination, origin, amount),
+      ).toThrow(NotFoundError);
     });
   });
 });

@@ -65,6 +65,7 @@ module.exports = {
   getBalance,
   handleDeposit,
   handleWithdraw,
+  handleTransfer,
   handleEvent,
   reset,
 };

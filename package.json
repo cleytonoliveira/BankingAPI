@@ -10,6 +10,7 @@
     "lint:fix": "prettier --write .",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --detectOpenHandles --watchAll",
+    "test:coverage": "jest --detectOpenHandles --coverage",
     "swagger": "node src/docs/swagger.js"
   },
   "keywords": [],
