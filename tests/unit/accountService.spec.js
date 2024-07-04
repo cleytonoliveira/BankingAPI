@@ -22,4 +22,27 @@ describe("accountService", () => {
       expect(() => accountService.getBalance(accountId)).toThrow(NotFoundError);
     });
   });
+
+  describe("handleDeposit", () => {
+    it("should deposit the amount into an existing account", () => {
+      const destination = "300";
+      const amount = 100;
+      const account = new Account(destination);
+      accountRepository.getAccountById.mockReturnValue(account);
+      const result = accountService.handleDeposit(destination, null, amount);
+      expect(result.destination.balance).toBe(100);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(account);
+    });
+
+    it("should create a new account and deposit the amount", () => {
+      const destination = "400";
+      const amount = 100;
+      accountRepository.getAccountById.mockReturnValue(null);
+      const result = accountService.handleDeposit(destination, null, amount);
+      expect(result.destination.balance).toBe(100);
+      expect(accountRepository.saveAccount).toHaveBeenCalledWith(
+        result.destination,
+      );
+    });
+  });
 });

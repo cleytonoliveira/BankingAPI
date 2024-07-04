@@ -63,6 +63,7 @@ function reset() {
 
 module.exports = {
   getBalance,
+  handleDeposit,
   handleEvent,
   reset,
 };
