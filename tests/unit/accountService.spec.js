@@ -122,4 +122,11 @@ describe("accountService", () => {
       ).toThrow(NotFoundError);
     });
   });
+
+  describe("reset", () => {
+    it("should reset the account repository", () => {
+      accountService.reset();
+      expect(accountRepository.reset).toHaveBeenCalled();
+    });
+  });
 });
