@@ -30,9 +30,7 @@
   "paths": {
     "/balance": {
       "get": {
-        "tags": [
-          "Balance"
-        ],
+        "tags": ["Balance"],
         "description": "Endpoint to get the balance",
         "parameters": [
           {
@@ -80,9 +78,7 @@
     },
     "/event": {
       "post": {
-        "tags": [
-          "Event"
-        ],
+        "tags": ["Event"],
         "description": "Endpoint to create an event",
         "responses": {
           "201": {
@@ -162,9 +158,7 @@
     },
     "/reset": {
       "post": {
-        "tags": [
-          "Reset"
-        ],
+        "tags": ["Reset"],
         "description": "Endpoint to reset the account",
         "responses": {
           "200": {
