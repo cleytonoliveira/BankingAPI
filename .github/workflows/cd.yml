@@ -28,3 +28,13 @@ jobs:
         with:
           name: bankingapi-release
           path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: deliver
+    steps:
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: bankingapi-release
+      - name: Display structure of downloaded files
+        run: ls -R
